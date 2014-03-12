@@ -56,7 +56,7 @@ module FakeFtp
     end
 
     def add_file(filename, data, last_modified_time = Time.now)
-      @files << FakeFtp::File.new(::File.basename(filename.to_s), data, @mode, last_modified_time)
+      @files << FakeFtp::File.new(filename.to_s, data, @mode, last_modified_time)
     end
 
     def start
@@ -276,7 +276,7 @@ module FakeFtp
       data_client = active? ? @active_connection : @data_server.accept
 
       data = data_client.read(nil).chomp
-      file = FakeFtp::File.new(::File.basename(filename.to_s), data, @mode)
+      file = FakeFtp::File.new(filename.to_s, data, @mode)
       @files << file
 
       data_client.close
@@ -285,7 +285,7 @@ module FakeFtp
     end
 
     def _dele(filename = '')
-      files_to_delete = @files.select{ |file| file.name == filename }
+      files_to_delete = @files.select{ |file| file.name == ::File.basename(filename) && file.store_dir == ::File.dirname(filename)}
       return '550 Delete operation failed.' if files_to_delete.count == 0
 
       @files = @files - files_to_delete

@@ -1,13 +1,13 @@
 module FakeFtp
   class File
-    attr_accessor :bytes, :name, :last_modified_time
+    attr_accessor :bytes, :name, :last_modified_time, :store_dir
     attr_writer :type
     attr_accessor :data
     attr_reader :created
 
-    def initialize(name = nil, data = nil, type = nil, last_modified_time = Time.now)
+    def initialize(full_path = nil, data = nil, type = nil, last_modified_time = Time.now)
       @created = Time.now
-      @name = name
+      @name = ::File.basename(full_path)
       @data = data
       # FIXME this is far too ambiguous. args should not mean different
       # things in different contexts.
@@ -16,6 +16,7 @@ module FakeFtp
       @data = data_is_bytes ? nil : data
       @type = type
       @last_modified_time = last_modified_time.utc
+      @store_dir = ::File.dirname(full_path)
     end
 
     def data=(data)
