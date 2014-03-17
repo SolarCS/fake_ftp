@@ -59,6 +59,10 @@ module FakeFtp
       @files << FakeFtp::File.new(filename.to_s, data, @mode, last_modified_time)
     end
 
+    def directory(directory_path)
+      @files.select{ |file| file.store_dir == directory_path }.map(&:name)
+    end
+
     def start
       @started = true
       @server = ::TCPServer.new('127.0.0.1', port)
